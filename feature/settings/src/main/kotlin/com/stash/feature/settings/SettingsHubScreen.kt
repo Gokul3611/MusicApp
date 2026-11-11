@@ -29,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.stash.feature.settings.components.SettingsGroupCard
 import com.stash.feature.settings.components.SettingsNavRow
 import com.stash.feature.settings.components.SettingsSearchField
-import com.stash.feature.settings.components.SupportBanner
 import com.stash.core.ui.components.bottomChromePadding
 
 /**
@@ -54,7 +53,6 @@ fun SettingsHubScreen(
     onOpenLibraryStorage: () -> Unit,
     onOpenAppearance: () -> Unit,
     onOpenAbout: () -> Unit,
-    onOpenUrl: (String) -> Unit,
     onOpenLosslessSources: () -> Unit,
     onOpenEqualizer: () -> Unit,
     /** Library & Storage › Your Stash, for a search hit; null when the link is switched off in this build. */
@@ -62,7 +60,6 @@ fun SettingsHubScreen(
     onOpenHomeLayout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
-    supportCard: SupportCardViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val streamingEnabled by viewModel.streamingEnabled.collectAsStateWithLifecycle()
@@ -155,8 +152,6 @@ fun SettingsHubScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // No "Settings" title: the tab bar already says where you are.
-        val support by supportCard.state.collectAsStateWithLifecycle()
-        SupportBanner(state = support, onOpenUrl = onOpenUrl)
         SettingsSearchField(
             value = searchQuery,
             onValueChange = { searchQuery = it },

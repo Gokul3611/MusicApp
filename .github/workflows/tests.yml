@@ -247,7 +247,7 @@ jobs:
       - name: Upload debug APK
         uses: actions/upload-artifact@v6
         with:
-          name: stash-debug-apk
+          name: music-debug-apk
           path: ${{ steps.find_apk.outputs.apk_path }}
 
   # The release build runs R8 (app/proguard-rules.pro), and only the release build does: a new library whose

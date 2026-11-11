@@ -224,26 +224,6 @@ fun SettingsAccountsScreen(
         )
     }
 
-    // Discord token paste dialog (manual fallback).
-    if (uiState.showDiscordTokenDialog) {
-        com.stash.feature.settings.components.DiscordTokenDialog(
-            isValidating = uiState.isDiscordTokenValidating,
-            errorMessage = uiState.discordTokenError,
-            onConnect = viewModel::onConnectDiscordWithToken,
-            onDismiss = viewModel::onDismissDiscordTokenDialog,
-        )
-    }
-
-    // Discord WebView login (full-screen overlay).
-    if (uiState.showDiscordWebLogin) {
-        com.stash.feature.settings.components.DiscordLoginWebView(
-            onTokenExtracted = viewModel::onDiscordWebLoginTokenExtracted,
-            onDismiss = viewModel::onDismissDiscordWebLogin,
-            onManualFallback = viewModel::onConnectDiscordManual,
-        )
-        return
-    }
-
     // YouTube error dialog (missing credentials, network failure, etc.).
     if (uiState.youTubeError != null) {
         AlertDialog(
@@ -442,62 +422,6 @@ fun SettingsAccountsScreen(
                 }
             } else {
                 null
-            },
-        )
-
-        val discordUriHandler = androidx.compose.ui.platform.LocalUriHandler.current
-        val discordNeedsConsent by viewModel.discordNeedsPresenceConsent.collectAsStateWithLifecycle()
-
-        // Discord is the one account where connecting carries a risk to the
-        // USER's account rather than just their privacy, so it is the one
-        // account that asks first. Discord has no sanctioned way for a phone
-        // app to set Rich Presence, so this drives the account's own session —
-        // what their Platform Manipulation Policy names as a self-bot, and
-        // what their support article says can end in account termination.
-        // Enforcement in practice targets spam, so the real-world risk is low;
-        // it is still not ours to take on someone else's behalf silently.
-        var showDiscordRisk by rememberSaveable { mutableStateOf(false) }
-        if (showDiscordRisk) {
-            AlertDialog(
-                onDismissRequest = { showDiscordRisk = false },
-                containerColor = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.large,
-                title = { Text(stringResource(R.string.settings_discord_risk_title)) },
-                text = {
-                    Text(
-                        stringResource(R.string.settings_discord_risk_body),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                },
-                confirmButton = {
-                    TextButton(onClick = {
-                        showDiscordRisk = false
-                        viewModel.onConnectDiscord()
-                    }) { Text(stringResource(R.string.settings_discord_risk_connect)) }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDiscordRisk = false }) { Text(stringResource(R.string.settings_cancel)) }
-                },
-            )
-        }
-        AccountConnectionCard(
-            serviceName = "Discord",
-            icon = ImageVector.vectorResource(UiR.drawable.ic_brand_discord),
-            accentColor = androidx.compose.ui.graphics.Color(0xFF5865F2), // Discord blurple
-            authState = uiState.discordAuthState,
-            onConnect = { showDiscordRisk = true },
-            onDisconnect = {
-                // Also sign the WebView out (the token otherwise stays in its storage).
-                com.stash.feature.settings.components.clearDiscordWebSession()
-                viewModel.onDisconnectDiscord()
-            },
-            needsAction = discordNeedsConsent,
-            needsActionLabel = stringResource(R.string.settings_discord_finish_connecting),
-            onNeedsAction = {
-                viewModel.onDiscordFinishConnecting { url ->
-                    runCatching { discordUriHandler.openUri(url) }.isSuccess
-                }
             },
         )
 

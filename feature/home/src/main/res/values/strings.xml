@@ -11,7 +11,6 @@
 
     <!-- App Bar & Help Menu -->
     <string name="home_cd_wordmark" translatable="false">Stash</string>
-    <string name="home_cd_discord">Join the Stash Discord</string>
     <string name="home_cd_help_menu">Report an issue or help translate</string>
     <string name="home_report_issue">Report an issue</string>
     <string name="home_report_issue_desc">Grab diagnostics, then open GitHub</string>

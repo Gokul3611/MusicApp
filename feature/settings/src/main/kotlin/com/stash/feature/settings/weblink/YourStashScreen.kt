@@ -162,7 +162,6 @@ fun YourStashScreen(
                     mirror = { MirrorSection(mirror, mirrorVm) },
                 )
             }
-            SupporterSection(ui.supporter, onClaim = { claimOpen = true })
             CloudSection(ui.cloud, onOpenCloud)
             BackupsSection(ui.backups, onBackupShortcut)
             ComingSection(ui.coming)
